@@ -1,0 +1,19 @@
+function sauvegarderMap()
+    local mapData = {}
+      for _, objet in pairs(workspace:GetChildren()) do
+        if objet:IsA("Part") then
+            table.insert(mapData, {
+                nom = objet.Name,
+                position = objet.Position,
+                taille = objet.Size,
+                couleur = objet.BrickColor
+            })
+        end
+    end
+    
+    local json = game:GetService("HttpService"):JSONEncode(mapData)
+    
+    print("Données sauvegardées : " .. json)  -- Pour vérifier dans la console
+end
+
+sauvegarderMap()
