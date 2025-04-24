@@ -1,19 +1,65 @@
+-- Créer l'interface GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "MapBackupGui"
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 500, 0, 400)
+Frame.Position = UDim2.new(0.5, -250, 0.5, -200)
+Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Frame.Parent = ScreenGui
+
+local TextLabel = Instance.new("TextLabel")
+TextLabel.Size = UDim2.new(1, -20, 0.7, -20)
+TextLabel.Position = UDim2.new(0, 10, 0, 10)
+TextLabel.BackgroundTransparency = 1
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextSize = 14
+TextLabel.TextWrapped = true
+TextLabel.Text = "Les données de la map seront affichées ici."
+TextLabel.Parent = Frame
+
+local CopyButton = Instance.new("TextButton")
+CopyButton.Size = UDim2.new(0, 200, 0, 50)
+CopyButton.Position = UDim2.new(0.5, -100, 0.85, 0)
+CopyButton.Text = "Copier les données"
+CopyButton.TextSize = 18
+CopyButton.BackgroundColor3 = Color3.fromRGB(0, 153, 255)
+CopyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CopyButton.Parent = Frame
+
+-- Fonction pour sauvegarder et afficher les données de la map
 function sauvegarderMap()
-    local mapData = {}
-      for _, objet in pairs(workspace:GetChildren()) do
+    local mapData = {}  -- Table pour stocker les données de la map
+    
+    -- Parcours tous les objets du Workspace
+    for _, objet in pairs(workspace:GetChildren()) do
+        -- On ne sauvegarde que les objets de type "Part"
         if objet:IsA("Part") then
             table.insert(mapData, {
                 nom = objet.Name,
                 position = objet.Position,
                 taille = objet.Size,
-                couleur = objet.BrickColor
+                couleur = objet.BrickColor.Name  -- Affichage de la couleur sous forme de chaîne
             })
         end
     end
     
+    -- Convertir la table en JSON
     local json = game:GetService("HttpService"):JSONEncode(mapData)
     
-    print("Données sauvegardées : " .. json)  -- Pour vérifier dans la console
+    -- Afficher les données dans l'interface
+    TextLabel.Text = "Données de la map : \n" .. json
 end
 
+-- Fonction pour copier le texte dans le presse-papier
+function copierTexte()
+    setclipboard(TextLabel.Text)
+    print("Texte copié dans le presse-papier !")
+end
+
+-- Connecter les actions
+CopyButton.MouseButton1Click:Connect(copierTexte)
+
+-- Appeler la fonction de sauvegarde et afficher les données dans l'interface
 sauvegarderMap()
